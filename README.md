@@ -8,13 +8,17 @@ Inspired by the great work of [360manu](https://github.com/360manu) and his
 great work published in [kettlerUSB2BLE](https://github.com/360manu/kettlerUSB2BLE). However, I wanted to rewrite the functionality using Swift language on Linux. Again, there has been great work already done by the community, namely [PureSwift](https://github.com/PureSwift)
 
 ## Polling and Publishing
-
+The Program triest to connect to Kettler Racer 9 over USB. Aftere successfully establishing communication, the training status of the device is requestet every second and broadcasted over Bluetooth Smart Service "Cycling Power Service".
 # Installation
-tbd
 ## Swift on Linux
-tbd
+To compile swift source code on linux, install swift on linux
+
 ## Using XCode
-Swish
+You can use Xcode to develop and compile the software on a Mac. To get a executable to be run on raspberry, the code  must be compiled on the target-architecture (aarch64). Fortunately, [thomaspaulman](https://github.com/thomaspaulmann) created a handy script to rsync the code to the raspberry and run the compilation on the remote machine: [Swish](https://github.com/thomaspaulmann/Swish). Compile the source with the following command
+
+```
+$ swish <user> <host>
+```
 # Testing
 tbd
 ## Finding the right USB-Port

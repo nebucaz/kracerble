@@ -1,0 +1,52 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Bluetooth",
+        "repositoryURL": "https://github.com/PureSwift/Bluetooth.git",
+        "state": {
+          "branch": "master",
+          "revision": "437f012a15f253903515c40e2610ae6cdafacbe7",
+          "version": null
+        }
+      },
+      {
+        "package": "BluetoothLinux",
+        "repositoryURL": "https://github.com/PureSwift/BluetoothLinux",
+        "state": {
+          "branch": "master",
+          "revision": "52078ccc6928c8f3e7712bbda052f4a927a2e5ad",
+          "version": null
+        }
+      },
+      {
+        "package": "GATT",
+        "repositoryURL": "https://github.com/PureSwift/GATT",
+        "state": {
+          "branch": "master",
+          "revision": "955a19b2030e08666154f2ee52d7955f56bb6ff5",
+          "version": null
+        }
+      },
+      {
+        "package": "Regex",
+        "repositoryURL": "https://github.com/crossroadlabs/Regex.git",
+        "state": {
+          "branch": null,
+          "revision": "166728756082a9cac6e4aed3ebbce8e41cb3a945",
+          "version": "1.2.0"
+        }
+      },
+      {
+        "package": "SwiftSerial",
+        "repositoryURL": "https://github.com/yeokm1/SwiftSerial.git",
+        "state": {
+          "branch": null,
+          "revision": "86625ee4148f9da55883ac57402742c2c919bfb1",
+          "version": "0.1.1"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
