@@ -28,8 +28,7 @@ $ swish <user> <host>
 The compiled source can be found in the debug directory of the .build folder and run using:
 ```
 pi@raspberrypi:~ $ Swish/kracerble/.build/debug/kracerble
-
-
+```
 ## Connecting the Zwift App
 Open the Zwift app and choose the KRacer9 Service after selecting the "Power" - button in the pairing dialogue
 
