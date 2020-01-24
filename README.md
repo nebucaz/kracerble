@@ -25,7 +25,10 @@ $ swish <user> <host>
 ```
 # Running & Testing
 ## Running
-The compiled source can be found in the build directory under
+The compiled source can be found in the debug directory of the .build folder and run using:
+```
+pi@raspberrypi:~ $ Swish/kracerble/.build/debug/kracerble
+
 
 ## Connecting the Zwift App
 Open the Zwift app and choose the KRacer9 Service after selecting the "Power" - button in the pairing dialogue
@@ -33,6 +36,6 @@ Open the Zwift app and choose the KRacer9 Service after selecting the "Power" - 
 ## Testing Blutooth Smart Cycling Power Service with fake data
 You can broadcast random test values by uncommentin/commenting the followin section in main.swift 
 ```
-//kettler?.provideFakeData()
+// kettler?.provideFakeData()
 kettler?.startPolling(portName)
 ```
