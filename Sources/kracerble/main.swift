@@ -25,9 +25,10 @@ if #available(macOS 10.12, *) {
     
     // main loop
     while true {
-        if readLine() != nil {
-            break
-        }
+        sleep(10)
+        //if readLine() != nil {
+        //    break
+        // }
     }
     
     // must be called in sigterm handler instead
