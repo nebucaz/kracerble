@@ -24,6 +24,14 @@ You can use Xcode to develop and compile the software on a Mac. To get a executa
 $ swish <user> <host>
 ```
 # Running & Testing
+## Session directory
+The programm will try to auto-detect your training sessions and additionally to broadcasting the values received from the ergometer via USB, in a csv file. The directory for the sessions is hardcoded (for now). If you want to have the csv-files written, either create the directory or change the path in source code (FitnessSession.swift)
+```
+pi@raspberrypi:~ $ mkdir -p /home/pi/kracer9
+
+```
+
+
 ## Running
 The compiled source can be found in the debug directory of the .build folder and run using:
 ```
