@@ -32,7 +32,7 @@ class KettlerProxy : FitnessDeviceDelegate {
         racer?.startPolling()
     }
     
-    func startBluetooth() throws {
+    func startBluetooth(_ type: KettlerType = .racer9) throws {
         guard let hostController = HostController.default else {
             throw Error.bluetoothUnavailable
         }

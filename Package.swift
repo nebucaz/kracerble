@@ -7,6 +7,7 @@ let package = Package(
     name: "kracerble",
     dependencies: [
         // Dependencies declare other packages that this package depends on.
+	.package(url: "https://github.com/apple/swift-argument-parser", from: "0.3.0"),
         .package(url: "https://github.com/PureSwift/GATT", .branch("master")), 
         .package(url: "https://github.com/PureSwift/BluetoothLinux", .branch("master")),
         .package(url: "https://github.com/yeokm1/SwiftSerial.git", from:"0.1.1"),
@@ -17,7 +18,7 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "kracerble",
-            dependencies: ["GATT","BluetoothLinux","SwiftSerial","Regex"]),
+            dependencies: [.product(name: "ArgumentParser", package: "swift-argument-parser"), "GATT","BluetoothLinux","SwiftSerial","Regex"]),
         .testTarget(
             name: "kracerbleTests",
             dependencies: ["kracerble"]),

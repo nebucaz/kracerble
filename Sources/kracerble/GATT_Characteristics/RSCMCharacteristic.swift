@@ -91,7 +91,7 @@ final class RSCMCharacteristic : BLECharacteristic {
         super.init()
         
         self.uuid = BluetoothUUID(rawValue: "2A53")!
-        self.data = Data(count: Data(count: MemoryLayout<Value>.size)) // 10
+        self.data = Data(count: MemoryLayout<RSCMValue>.size) // 10
         self.properties = [ .notify, .read ]
         self.permissions = [ .read ]
         

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Bluetooth
 import BluetoothLinux
 import GATT
 
@@ -44,7 +45,8 @@ class KettlerPeripheral : BLEPeripheral {
             try peripheral.start()
             
             NSLog("Kettler Peripheral started")
-            advertise(name)
+            let localName = GAPCompleteLocalName(name: name)
+            advertise(localName)
         }
         catch let error {
             NSLog("Can not start peripheral \(error.localizedDescription)")
