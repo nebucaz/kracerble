@@ -133,6 +133,72 @@ class KettlerRacer : FitnessDevice {
         }
         
         var newData = CharacteristicsData()
+        
+        let success = matchRacer(status, newData: &newData)
+        if !success {
+            matchTreadmill(status, newData: &newData)
+        }
+        
+        return newData
+    }
+    
+    func matchRacer(_ status: String, newData: inout CharacteristicsData ) -> Bool {
+        let statusPattern = "(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d{1,2}):(\\d{2})\\s+(\\d+)"
+        
+        do {
+            let regex: Regex = try Regex(pattern: statusPattern,
+                                         groupNames:"pulse", "rpm", "speed", "dist", "reqpower", "energy", "min", "sec", "power")
+            
+            let match = regex.findFirst(in: status)
+            if let match = match {
+                if let rpm = match.group(named: "rpm") {
+                    newData.instantaneousCadence = UInt16(rpm)!
+                }
+                
+                if let instantaneousPower = match.group(named: "power") {
+                    newData.instantaneousPower = UInt16(instantaneousPower)!
+                }
+                
+                if let energy = match.group(named: "energy") {
+                    newData.totalEnergy = UInt16(energy)!
+                }
+                
+                if let speed = match.group(named: "speed") {
+                    newData.instantaneousSpeed = UInt16(speed)!
+                }
+                
+                if let dist = match.group(named: "dist") {
+                    newData.totalDistance = UInt32(dist)! * 100
+                }
+                
+                if let time = match.group(named: "min") {
+                    newData.elapsedTime = UInt16(time)! * 60
+                }
+                
+                if let sec = match.group(named: "sec") {
+                    newData.elapsedTime += UInt16(sec)!
+                }
+                
+                if let pulse = match.group(named: "pulse") {
+                    newData.heartRate = UInt8(pulse)!
+                }
+                
+                return true
+            }
+            else {
+                NSLog("RegEx: Can not match status \(status)")
+            }
+        } catch let error {
+            NSLog("RegEx: parseStatus error \(error)")
+        }
+        
+        return false
+    }
+    
+    // #TODO
+    func matchTreadmill(_ status : String, newData: inout CharacteristicsData ) {
+        
+        // treadmill = - ST = 000 -> 000 -> 0000 -> 00 -> 0000 -> 00:00 -> 000 -> 00   x0d, 0x0a
         let statusPattern = "(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d{1,2}):(\\d{2})\\s+(\\d+)"
         
         do {
@@ -180,8 +246,6 @@ class KettlerRacer : FitnessDevice {
         } catch let error {
             NSLog("RegEx: parseStatus error \(error)")
         }
-        
-        return newData
     }
     
     // scans serial Ports for Kettler
