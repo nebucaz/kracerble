@@ -43,6 +43,12 @@ struct CharacteristicsData {
     /// Beats per minute with a resolution of 1
     var heartRate : UInt8 = 0
     
+    /// Inclination Percent with a resolution of 0.1
+    var inclination : Int16 = 0
+    
+    /// Ws with a resolution of 1
+    var totalEnergyWs : UInt16 = 0
+    
     /*
      /// 1/minute with a resolution of 0.5
      var averageCadence : UInt16

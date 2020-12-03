@@ -38,7 +38,7 @@ class KettlerProxy : FitnessDeviceDelegate {
         }
         
         do {
-            peripheral = try KettlerPeripheral(hostController)
+            peripheral = try KettlerPeripheral(hostController, type: type)
             peripheral?.start()
             NSLog("start")
         }
@@ -48,7 +48,7 @@ class KettlerProxy : FitnessDeviceDelegate {
     }
     
     func shutdown() {
-         NSLog("sutdown")
+         NSLog("shutdown")
         if let timer = timer {
             timer.stop()
         }

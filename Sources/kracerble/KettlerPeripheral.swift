@@ -37,14 +37,20 @@ class KettlerPeripheral : BLEPeripheral {
             add(RunningSpeedCadenceService()) // 0x1814
             name = "KTrack5"
         }
+        
+        if type == .racer9 {
+            NSLog("Peripheral type is Cycling Power")
+        } else {
+            NSLog("Running Speed and Cadence")
+        }
     }
     
     // Start peripheral
     func start() {
         do {
             try peripheral.start()
-            
             NSLog("Kettler Peripheral started")
+ 
             let localName = GAPCompleteLocalName(name: name)
             advertise(localName)
         }

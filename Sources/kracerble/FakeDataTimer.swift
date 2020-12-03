@@ -42,6 +42,8 @@ class FakeDataTimer {
         self.data.elapsedTime += UInt16(exactly: FakeDataTimer.interval)!
         self.data.instantaneousCadence = UInt16.random(in: 200...300)
         self.data.heartRate = UInt8.random(in: 70...180)
+        self.data.inclination = Int16.random(in: 0...12)
+        self.data.totalEnergyWs = UInt16.random(in: 0...500)
         
         if let delegate = delegate {
             delegate.didChangeData(self.data)

@@ -199,24 +199,22 @@ class KettlerRacer : FitnessDevice {
     func matchTreadmill(_ status : String, newData: inout CharacteristicsData ) {
         
         // treadmill = - ST = 000 -> 000 -> 0000 -> 00 -> 0000 -> 00:00 -> 000 -> 00   x0d, 0x0a
-        let statusPattern = "(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d{1,2}):(\\d{2})\\s+(\\d+)"
+        // 1. Heart Rate, 2. Speed (km/h * 10), 3. Distance (m *10), 4. Inclination (%), 5. Energy (Ws), 6. Time (mm:ss), 7. Speed (km/h * 10), 8. Inclination (%)
+        //
+        let statusPattern = "(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d{1,2}):(\\d{2})\\s+(\\d+)"
         
         do {
             let regex: Regex = try Regex(pattern: statusPattern,
-                                         groupNames:"pulse", "rpm", "speed", "dist", "reqpower", "energy", "min", "sec", "power")
+                                         groupNames:"pulse", "speed", "dist", "incl", "energy", "min", "sec", "speed2", "incl2")
             
             let match = regex.findFirst(in: status)
             if let match = match {
-                if let rpm = match.group(named: "rpm") {
-                    newData.instantaneousCadence = UInt16(rpm)!
-                }
-                
-                if let instantaneousPower = match.group(named: "power") {
-                    newData.instantaneousPower = UInt16(instantaneousPower)!
+                if let incl = match.group(named: "incl") {
+                    newData.inclination = Int16(incl)! * 10
                 }
                 
                 if let energy = match.group(named: "energy") {
-                    newData.totalEnergy = UInt16(energy)!
+                    newData.totalEnergyWs = UInt16(energy)!
                 }
                 
                 if let speed = match.group(named: "speed") {
