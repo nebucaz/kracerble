@@ -1,8 +1,10 @@
 //
-//  File.swift
-//  
+//  RSCMCharacteristic.swift
+//  kracerble
 //
-//  Created by neo on 30.11.20.
+//  Created by neo on 22.11.20.
+//  Copyright © 2020 page.agent. All rights reserved.
+//
 //
 
 import Foundation
@@ -80,7 +82,7 @@ final class RSCMCharacteristic : BLECharacteristic {
     override func updateProperties(_ newData: CharacteristicsData) -> Void {
         self.instantaneousSpeed = newData.instantaneousSpeed
         self.totalDistance = newData.totalDistance
-    
+        
         for observer in observers {
             observer(self.data)
         }

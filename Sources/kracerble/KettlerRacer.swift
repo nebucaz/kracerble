@@ -20,28 +20,38 @@ class KettlerRacer : FitnessDevice {
     var delegate : FitnessDeviceDelegate?
     var portName : String?
     var countNoAnswer : Int
-
+    var symbolRate : BaudRate
+    var type: KettlerType
+    
     init() {
         portName = "/dev/ttyUSB0"
         connected = false
         countNoAnswer = 0
         maxIdleTime = Int(300 / Int(KettlerRacer.interval))
+        symbolRate  = .baud57600
+        type = .racer9
     }
     
-    convenience init(_ portName: String) {
+    convenience init(_ portName: String, type: KettlerType = .racer9) {
         self.init()
         self.portName = portName
-    }
+        self.symbolRate = (type == KettlerType.racer9) ? BaudRate.baud57600 : BaudRate.baud9600
+        self.type = type
+     }
     
     func startPolling() {
+        NSLog("Start polling")
+        
         timer = RepeatingTimer(timeInterval: KettlerRacer.interval)
         timer?.eventHandler = {
             
             if self.connected {
+               
                 let status = self.getStatus()
                 let newData = self.parseStatus(status)
                 
                 guard newData != nil else {
+                    NSLog("get status - no data")
                     return
                 }
                 
@@ -134,9 +144,11 @@ class KettlerRacer : FitnessDevice {
         
         var newData = CharacteristicsData()
         
-        let success = matchRacer(status, newData: &newData)
-        if !success {
-            matchTreadmill(status, newData: &newData)
+        if self.type == .racer9 {
+            _ = matchRacer(status, newData: &newData)
+        }
+        else {
+           matchTreadmill(status, newData: &newData)
         }
         
         return newData
@@ -186,7 +198,7 @@ class KettlerRacer : FitnessDevice {
                 return true
             }
             else {
-                NSLog("RegEx: Can not match status \(status)")
+                NSLog("RegEx: Can not match racer status \(status)")
             }
         } catch let error {
             NSLog("RegEx: parseStatus error \(error)")
@@ -195,14 +207,14 @@ class KettlerRacer : FitnessDevice {
         return false
     }
     
-    // #TODO
+    // treadmill = - ST = 000 -> 000 -> 0000 -> 00 -> 0000 -> 00:00 -> 000 -> 00   x0d, 0x0a
+    // 1. Heart Rate, 2. Speed (km/h * 10), 3. Distance (m *10), 4. Inclination (%), 5. Energy (Ws), 6. Time (mm:ss), 7. Speed (km/h * 10), 8. Inclination (%)
+    //
     func matchTreadmill(_ status : String, newData: inout CharacteristicsData ) {
-        
-        // treadmill = - ST = 000 -> 000 -> 0000 -> 00 -> 0000 -> 00:00 -> 000 -> 00   x0d, 0x0a
-        // 1. Heart Rate, 2. Speed (km/h * 10), 3. Distance (m *10), 4. Inclination (%), 5. Energy (Ws), 6. Time (mm:ss), 7. Speed (km/h * 10), 8. Inclination (%)
-        //
-        let statusPattern = "(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d{1,2}):(\\d{2})\\s+(\\d+)"
-        
+
+        let statusPattern = "(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+):(\\d{2})\\s+(\\d+)"
+                               
+
         do {
             let regex: Regex = try Regex(pattern: statusPattern,
                                          groupNames:"pulse", "speed", "dist", "incl", "energy", "min", "sec", "speed2", "incl2")
@@ -217,8 +229,10 @@ class KettlerRacer : FitnessDevice {
                     newData.totalEnergyWs = UInt16(energy)!
                 }
                 
+                // a value of 2560 correspondes to 36 km/h, 256 = 3.6 km/h = 1m/s
                 if let speed = match.group(named: "speed") {
-                    newData.instantaneousSpeed = UInt16(speed)!
+                    let speed256 = (UInt16(speed)! * 256) / 36
+                    newData.instantaneousSpeed = UInt16(speed256)
                 }
                 
                 if let dist = match.group(named: "dist") {
@@ -239,7 +253,7 @@ class KettlerRacer : FitnessDevice {
                 
             }
             else {
-                NSLog("RegEx: Can not match status \(status)")
+                NSLog("RegEx: Can not match track s5 status \(status)")
             }
         } catch let error {
             NSLog("RegEx: parseStatus error \(error)")
@@ -263,11 +277,27 @@ class KettlerRacer : FitnessDevice {
                     try serialPort?.openPort()
                     NSLog("Serial port \(portName) opened successfully.")
                     
-                    serialPort?.setSettings(receiveRate: .baud57600,
-                                            transmitRate: .baud57600,
+                    serialPort?.setSettings(receiveRate: self.symbolRate, // .baud57600,
+                                            transmitRate: self.symbolRate, // .baud57600,
                                             minimumBytesToRead: 0,
-                                            timeout: 0)
+                                            timeout: 0,
+                                            dataBitsSize: .bits8)
 
+                   // let id = self.getID()
+                    if let id = self.getID() {
+                        if id.lengthOfBytes(using: .ascii) <= 0 {
+                            NSLog("empty ID")
+                            continue
+                        }
+                    }
+                    
+                    if let ve = self.getVersion() {
+                        if ve.lengthOfBytes(using: .ascii) <= 0  {
+                            NSLog("empty version")
+                            continue
+                        }
+                    }
+                    
                     countNoAnswer = 0
                     connected = true
                     break
@@ -288,14 +318,18 @@ class KettlerRacer : FitnessDevice {
         var stringReceived : String?
         
         do {
-            _ = try serialPort?.writeString("\(cmd)\r\n")
+            _ = try serialPort?.writeString("\(cmd.utf8)\r\n")
+
+            stringReceived = try serialPort?.readUntilChar(0x0d)
             
+            /*
             let rcvData = try serialPort?.readData(ofLength: 80)
             if let data = rcvData {
                 if data.count >= 1 {
                     stringReceived = String(bytes: data, encoding: .ascii)
                 }
             }
+            */
         } catch PortError.deviceNotConnected {
             NSLog("Device not connected. Trying to reconnect")
             findDevice()
@@ -331,7 +365,7 @@ class KettlerRacer : FitnessDevice {
     
     func canWrite() -> Bool {
         do {
-            let writeResult = try serialPort?.writeData(Data([0x10, 0x13]))
+            let writeResult = try serialPort?.writeData(Data([0x0a, 0x0d]))
             return (writeResult! >= 1) ? true : false
         } catch {
             NSLog("Error: \(error.localizedDescription)")

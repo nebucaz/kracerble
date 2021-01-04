@@ -4,7 +4,7 @@ The Kettler Racer 9 is an ergometer with USB and Bluetooth interface. Similarly,
 
 In order to be able to use mentioned fitness machnies as a source for Zwift, the project connects to the fitness machines over USB. The training data is polled and published over a BLE server. Everithing runs on Raspberry PI (tested with models 2, 3 and 4) and probably on other linux based systems:
 * Kettler Racer 9 Ergometer: the instantaneous power value is published over Bluetooth Smart Characteristic "Cycling Power Measuermen [0x2A63](https://www.bluetooth.com/wp-content/uploads/Sitecore-Media-Library/Gatt/Xml/Characteristics/org.bluetooth.characteristic.cycling_power_measurement.xml) of the BLE Service Cycling Power Serivce [0x1818](https://www.bluetooth.com/wp-content/uploads/Sitecore-Media-Library/Gatt/Xml/Services/org.bluetooth.service.cycling_power.xml).  
-* Kettler Treadmill Track S5: Instantaneous speed and total distance are transmitted over BLE using  RSC Service [0x1814]() (Running Speed and Cadence Service) containing RSC Measurement [0x2A53]() and RSC Feature [0x2A54]()
+* Kettler Treadmill Track S5: Instantaneous speed and total distance are transmitted over BLE using  RSC Service [0x1814](https://www.bluetooth.com/wp-content/uploads/Sitecore-Media-Library/Gatt/Xml/Characteristics/org.bluetooth.service.running_speed_and_cadence.xml) (Running Speed and Cadence Service) containing RSC Measurement [0x2A53](https://www.bluetooth.com/wp-content/uploads/Sitecore-Media-Library/Gatt/Xml/Characteristics/org.bluetooth.characteristic.rsc_measurement.xml) and RSC Feature [0x2A54](https://www.bluetooth.com/wp-content/uploads/Sitecore-Media-Library/Gatt/Xml/Characteristics/org.bluetooth.characteristic.rsc_feature.xml)
 
 ## Swift Linux on Raspberri Pi
 Inspired by the great work of [360manu](https://github.com/360manu) and his 
@@ -35,13 +35,20 @@ $ swish <user> <host>
 ```
 # Running & Testing
 ## Running
-The compiled source can be found in the .build directory.
+The compiled source can be found in the .build directory. To start for Kettler bike use
+```
+$ sudo kracerble/.build/debug/kracerble 2>&1
+```
+If you want to connect to Kettler Track S5 treadmill, you can pass the machine type parameter after specifying the serial port (better parameter handling coming in one of the next releases)
+```
+$ sudo kracerble/.build/debug/kracerble /dev/ttyUSB0 track5 2>&1
+```
 
 ## Connecting the Zwift App
 Open the Zwift app and choose the KRacer9 Service after selecting the "Power" - button in the pairing dialogue
 
 ## Testing Blutooth Smart Cycling Power Service with fake data
-You can broadcast random test values by uncommentin/commenting the followin section in main.swift 
+You can broadcast random test values by uncommenting/commenting the following section in main.swift 
 ```
 //kettler?.provideFakeData()
 kettler?.startPolling(portName)

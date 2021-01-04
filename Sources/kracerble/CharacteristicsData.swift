@@ -77,4 +77,7 @@ struct CharacteristicsData {
      var metabolicEquivalent : UInt8
      */
     
+    func toString() -> String {
+        return String(format: "instantaneousPower=%d, instantaneousSpeed=%d, totalDistance=%d", self.instantaneousPower, self.instantaneousSpeed, self.totalDistance)
+    }
 }

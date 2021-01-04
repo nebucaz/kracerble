@@ -1,8 +1,10 @@
 //
-//  File.swift
-//  
+//  RSCFCharacteristic.swift
+//  kracerble
 //
 //  Created by neo on 30.11.20.
+//  Copyright © 2020 page.agent. All rights reserved.
+//
 //
 
 import Foundation

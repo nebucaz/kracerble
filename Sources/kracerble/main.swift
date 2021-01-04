@@ -1,19 +1,36 @@
-    
+//
+//  main.swift
+//  kracerble
+//
+//  Created by neo on 22.01.20.
+//  Copyright © 2020 page.agent. All rights reserved.
+//
+
 import Foundation
 
-let machineType : KettlerType = .track5 // .racer9
+var machineType : KettlerType = .racer9
 var portName = "/dev/ttyUSB0"
+
+// #TODO: better arguments - ArgumentParser
 let arguments = CommandLine.arguments
 if arguments.count >= 2 {
     portName = arguments[1]
 }
-
+    
+if arguments.count >= 3 {
+    machineType = .track5 //
+    NSLog("Machine type set to track s5")
+}
+else {
+    NSLog("Machine type= racer 9")
+}
+    
 if #available(macOS 10.12, *) {
     var kettler : KettlerProxy?
     
     do {
-        kettler = KettlerProxy()
-        try kettler?.startBluetooth(machineType)
+        kettler = KettlerProxy(machineType)
+        try kettler?.startBluetooth()
         
         //kettler?.provideFakeData()
         kettler?.startPolling(portName)
@@ -88,17 +105,4 @@ struct KRacerBLE: ParsableCommand {
 }
 
 KRacerBLE.main()
-*/
- 
- 
-/*
-var portName = "/dev/ttyUSB0"
-var type : KettlerType = .racer9
-
-// sudo Swish/kracerble/.build/debug/kracerble [type] [port] > /dev/null 2>&1 &
-let arguments = CommandLine.arguments
-if arguments.count >= 2 {
-    portName = arguments[2]
-}
-
 */

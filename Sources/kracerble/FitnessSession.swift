@@ -13,7 +13,7 @@ class FitnessSession {
     var fileHandle : FileHandle?
     
     init() {
-        path = "/home/pi/kracer9/"
+        path = "/home/pi/kettler/"
         fileName = "unknown"
         
     }
@@ -31,8 +31,12 @@ class FitnessSession {
         
         let manager = FileManager.init()
         if manager.createFile(atPath: fullPath,
-                                   contents: header.data(using: .utf8)!, attributes: nil) {
+                                   contents: nil, attributes: nil) {
             fileHandle = FileHandle(forWritingAtPath: fullPath)
+            
+            if let fh = fileHandle {
+                fh.write(header.data(using: .utf8)!)
+            }
         }
         else {
             NSLog("error creating file")
@@ -66,7 +70,7 @@ class FitnessSession {
         RFC3339DateFormatter.dateFormat = "yyyy-MM-dd_HHmm"
         RFC3339DateFormatter.timeZone = TimeZone(secondsFromGMT: 3600)
         
-        var name : String = "kracer9_"
+        var name : String = "kettler_"
         name.append(RFC3339DateFormatter.string(from:Date()))
         name.append(".csv")
         return name

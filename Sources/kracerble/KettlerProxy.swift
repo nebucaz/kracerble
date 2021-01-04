@@ -15,9 +15,22 @@ class KettlerProxy : FitnessDeviceDelegate {
     var peripheral : KettlerPeripheral?
     var racer : KettlerRacer?
     var timer : FakeDataTimer?
+    var type : KettlerType
     
     enum Error : Swift.Error {
         case bluetoothUnavailable
+    }
+    
+    public init() {
+        peripheral = nil
+        racer = nil
+        timer = nil
+        type = .racer9
+    }
+    
+    convenience init(_ type: KettlerType = .racer9) {
+        self.init()
+        self.type = type
     }
     
     func startPolling(_ portName : String = "/dev/ttyUSB0") {
@@ -27,12 +40,12 @@ class KettlerProxy : FitnessDeviceDelegate {
             return
         }
         
-        racer = KettlerRacer(portName)
+        racer = KettlerRacer(portName, type: self.type)
         racer?.delegate = self
         racer?.startPolling()
     }
     
-    func startBluetooth(_ type: KettlerType = .racer9) throws {
+    func startBluetooth() throws {
         guard let hostController = HostController.default else {
             throw Error.bluetoothUnavailable
         }
@@ -40,7 +53,7 @@ class KettlerProxy : FitnessDeviceDelegate {
         do {
             peripheral = try KettlerPeripheral(hostController, type: type)
             peripheral?.start()
-            NSLog("start")
+            NSLog("start bluetooth server")
         }
         catch let error{
             NSLog(error.localizedDescription)
@@ -48,7 +61,7 @@ class KettlerProxy : FitnessDeviceDelegate {
     }
     
     func shutdown() {
-         NSLog("shutdown")
+        NSLog("shutdown")
         if let timer = timer {
             timer.stop()
         }
